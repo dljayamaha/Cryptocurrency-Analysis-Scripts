@@ -1,0 +1,32 @@
+pip install yfinance matplotlib
+import yfinance as yf
+import matplotlib.pyplot as plt
+import pandas as pd
+from datetime import datetime
+
+# Bitcoin halving dates
+halving_dates = ["2012-11-28", "2016-07-09", "2020-05-11"]
+
+# Calculating 6 months before and 1 year after each halving date
+date_ranges = []
+for date in halving_dates:
+    halving_date = datetime.strptime(date, "%Y-%m-%d")
+    start_date = halving_date - pd.DateOffset(months=6)
+    end_date = halving_date + pd.DateOffset(years=1)
+    date_ranges.append((start_date, end_date))
+
+# Fetching and plotting Bitcoin data for each date range
+for i, (start, end) in enumerate(date_ranges):
+    # Fetching data
+    btc_data = yf.download("BTC-USD", start=start, end=end)
+
+    # Plotting
+    plt.figure(figsize=(12, 6))
+    plt.plot(btc_data['Close'])
+    plt.title(f"Bitcoin Price Around Halving {i+1} (6 Months Before to 1 Year After)")
+    plt.xlabel("Date")
+    plt.ylabel("Closing Price (USD)")
+    plt.grid(True)
+    plt.savefig(f"btc_halving_{i+1}.png")
+    plt.show()
+
